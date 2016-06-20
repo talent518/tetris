@@ -467,7 +467,7 @@
 		return retArr;
 	};
 
-	$.fn.tetrisShape = function(container) {
+	$.fn.tetrisShape = function(container, tetrisOptions) {
 		var self = this;
 		var rows = Math.ceil($.tetrisGlobalOptions.shapes.length/$.tetrisGlobalOptions.columnNum);
 
@@ -621,7 +621,7 @@
 				});
 
 				$.each(options.players, function(k,v) {
-					$('<div></div>').appendTo(container).tetris(v);
+					$('<div></div>').appendTo(container).tetris($.extend(true, {}, tetrisOptions, v));
 				});
 
 				clearInterval(timer);
@@ -770,6 +770,11 @@
 		options: { // 可设置选项
 			beforeInit: function() {}, // 初始化前事件
 			afterInit: function() {}, // 初始化后事件
+			beforeScore: function(scores, lines) {}, // 得分前事件
+			afterScore: function(scores, lines) {}, // 得分后事件
+			beforeSave: function() {}, // 保存前事件
+			afterSave: function(stack) {}, // 保存后事件
+			shapeDownCallback: function(shapeIndex, isFall) {}, // 形状下落事件
 
 			leftMoveKey: 37, // 左移
 			rightMoveKey: 39, // 右移
@@ -1037,7 +1042,11 @@
 				}
 			} else if(!this.isMoveable(this.mainX, this.mainY+1, this.mainShape)) {
 				if(this.mainShapeIndex in $.tetrisGlobalOptions.shapeDownCallback) {
-					$.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this);
+					this.options.shapeDownCallback.call(this, this.mainShapeIndex, false);
+					
+					if($.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this) == false) {
+						return;
+					}
 
 					this.mainBackgroundColor = this.nextBackgroundColor;
 					this.mainBorderColor = this.nextBorderColor;
@@ -1074,8 +1083,12 @@
 			}
 
 			if(this.mainShapeIndex in $.tetrisGlobalOptions.shapeDownCallback) {
-				$.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this);
-
+				this.options.shapeDownCallback.call(this, this.mainShapeIndex, true);
+				
+				if($.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this) == false) {
+					return;
+				}
+				
 				this.mainBackgroundColor = this.nextBackgroundColor;
 				this.mainBorderColor = this.nextBorderColor;
 				this.mainShapeIndex = this.nextShapeIndex;
@@ -1090,6 +1103,8 @@
 		},
 		saveRecordAndNextShape: function() {
 			var x, y, flag, stack = [];
+			
+			this.options.beforeSave.call(this);
 
 			for(y=this.mainY; y<this.mainY+4; y++) {
 				flag = false;
@@ -1118,8 +1133,11 @@
 					}
 				}
 			}
+			this.options.afterSave.call(this, stack);
 
 			if(stack.length) {
+				this.options.beforeScore.call(this, stack.length*2 - 1, stack.length);
+				
 				this.scoreNum += stack.length*2 - 1;
 				this.lineNum += stack.length;
 
@@ -1145,8 +1163,6 @@
 						moves++;
 					}
 
-					console.log(y, moves, stack);
-
 					for(x=0; x<this.isBlockRecords[y].length; x++) {
 						if(y-moves < 0) {
 							this.isBlockRecords[y][x] = 0;
@@ -1163,6 +1179,8 @@
 
 					y--;
 				} while(y>=0);
+				
+				this.options.afterScore.call(this, stack.length*2 - 1, stack.length);
 			}
 
 			this.mainBackgroundColor = this.nextBackgroundColor;

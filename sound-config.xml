@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items baseHref="audio/" defaultVol="100">
+	<sound id="bomb" href="bomb.mp3" />
+	<sound id="bomb-fall" href="bomb-fall.mp3" />
+	<sound id="save" href="save.mp3" />
+	<sound id="score" href="score.mp3" />
+</items>

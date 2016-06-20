@@ -1,4 +1,4 @@
-<!Doctype html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns=http://www.w3.org/1999/xhtml>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -9,12 +9,32 @@
 		<link href="tetris.css" media="screen" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="jquery.min.js"></script>
 		<script type="text/javascript" src="tetris.js"></script>
+		<script type="text/javascript" src="soundmanager.js"></script>
 	</head>
 	<body>
+		<div><!-- soundManager appends "hidden" Flash to the first DIV on the page. --></div>
 		<div id="j-tetris-shape" style="margin:10px auto;"></div>
 		<div id="j-tetris-game" style="text-align:center;"></div>
 		<script type="text/javascript">
-		$('#j-tetris-shape').tetrisShape('#j-tetris-game');
+		soundManagerInit();
+		
+		$('#j-tetris-shape').tetrisShape('#j-tetris-game', {
+			beforeScore: function(scores, lines) {
+				soundManager.setVolume('score', 50);
+				soundManager.play('score', lines);
+			},
+			afterSave: function(stack) {
+				if(stack.length) {
+					return;
+				}
+				
+				soundManager.setVolume('save', 50);
+				soundManager.play('save');
+			},
+			shapeDownCallback: function(shapeIndex, isFall) {
+				soundManager.play('bomb' + (isFall ? '-fall' : ''));
+			}
+		});
 		</script>
 	</body>
 </html>
