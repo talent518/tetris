@@ -141,6 +141,14 @@
 		180: '邮件'
 	};
 	
+	function delayRemoveStyle(elem, interval) {
+		var self = this;
+		
+		setTimeout(function() {
+			self.removeStyle(elem);
+		}, interval);
+	};
+	
 	$.tetrisGlobalOptions = {
 		width: 25,
 		height: 25,
@@ -149,7 +157,35 @@
 		stopKey: 115, // 结束 F4
 		pauseKey: 117, // 暂停 F6
 		continueKey: 118, // 继续 F7
-		isCannotRotateShapeObject: [0, 9, 15].flip(),
+		isCannotRotateShapeObject: [0, 3, 10, 16, 38].flip(),
+		shapeDownCallback: {
+			3: function() {
+				var x, y, self = this;
+				
+				for(y=this.mainY; y<=this.mainY+5; y++) {
+					for(x=this.mainX-2; x<=this.mainX+2; x++) {
+						if(this.mainElems[y] && this.mainElems[y][x]) {
+							this.isBlockRecords[y][x] = 0;
+							
+							delayRemoveStyle.call(this, this.mainElems[y][x], Math.max(Math.abs(this.mainY+5-y),Math.abs(x-this.mainX))*100);
+						}
+					}
+				}
+			},
+			38: function() {
+				var x, y;
+				
+				for(y=this.mainY; y<this.mainY+4; y++) {
+					for(x=this.mainX; x<this.mainX+4; x++) {
+						if(this.mainElems[y] && this.mainElems[y][x]) {
+							this.isBlockRecords[y][x] = 0;
+							
+							delayRemoveStyle.call(this, this.mainElems[y][x], Math.max(Math.abs(this.mainY+3-y),Math.abs(x-this.mainX-1))*100);
+						}
+					}
+				}
+			}
+		},
 		crossCorePointIndex: 0,
 		shapes: [
 			[
@@ -161,6 +197,12 @@
 			[
 				[1, 0, 0, 0],
 				[1, 0, 0, 0],
+				[0, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[0, 1, 0, 0],
 				[0, 0, 0, 0],
 				[0, 0, 0, 0]
 			],
@@ -375,12 +417,6 @@
 				[1, 0, 0, 0]
 			],
 			[
-				[0, 0, 0, 1],
-				[0, 1, 1, 0],
-				[0, 1, 1, 0],
-				[1, 0, 0, 0]
-			],
-			[
 				[0, 1, 1, 0],
 				[0, 1, 1, 0],
 				[1, 0, 0, 1],
@@ -461,7 +497,8 @@
 			if(timerShapeIndex == $.tetrisGlobalOptions.shapes.length) {
 				timerShapeIndex = 0;
 			}
-			$.tetris.prototype.rotateShape(timerShape, $.tetrisGlobalOptions.shapes[timerShapeIndex++], $.tetris.prototype.randInt(4));
+			$.tetris.prototype.rotateShape(timerShape, $.tetrisGlobalOptions.shapes[timerShapeIndex], (timerShapeIndex in $.tetrisGlobalOptions.isCannotRotateShapeObject) ? 0 : $.tetris.prototype.randInt(4));
+			timerShapeIndex++;
 			for(y=0; y<4; y++) {
 				for(x=0; x<4; x++) {
 					if(timerShape[y][x]) {
@@ -991,7 +1028,19 @@
 					return;
 				}
 			} else if(!this.isMoveable(this.mainX, this.mainY+1, this.mainShape)) {
-				this.saveRecordAndNextShape();
+				if(this.mainShapeIndex in $.tetrisGlobalOptions.shapeDownCallback) {
+					$.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this);
+
+					this.mainBackgroundColor = this.nextBackgroundColor;
+					this.mainBorderColor = this.nextBorderColor;
+					this.mainShapeIndex = this.nextShapeIndex;
+					this.rotateShape(this.mainShape, this.nextShape, 0);
+					this.makeXY();
+
+					this.renderNextShape();
+				} else {
+					this.saveRecordAndNextShape();
+				}
 
 				return;
 			}
@@ -1016,8 +1065,20 @@
 				}
 			}
 
-			this.renderMainShape();
-			this.saveRecordAndNextShape();
+			if(this.mainShapeIndex in $.tetrisGlobalOptions.shapeDownCallback) {
+				$.tetrisGlobalOptions.shapeDownCallback[this.mainShapeIndex].call(this);
+
+				this.mainBackgroundColor = this.nextBackgroundColor;
+				this.mainBorderColor = this.nextBorderColor;
+				this.mainShapeIndex = this.nextShapeIndex;
+				this.rotateShape(this.mainShape, this.nextShape, 0);
+				this.makeXY();
+
+				this.renderNextShape();
+			} else {
+				this.renderMainShape();
+				this.saveRecordAndNextShape();
+			}
 		},
 		saveRecordAndNextShape: function() {
 			var x, y, flag, stack = [];
