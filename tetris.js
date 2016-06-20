@@ -10,12 +10,128 @@
 
 		return obj;
 	};
+
+	$.keyCodes = {
+		// 字母和数字键的键码值(keyCode)
+		48: 0,
+		49: 1,
+		50: 2,
+		51: 3,
+		52: 4,
+		53: 5,
+		54: 6,
+		55: 7,
+		56: 8,
+		57: 9,
+		65: 'A',
+		66: 'B',
+		67: 'C',
+		68: 'D',
+		69: 'E',
+		70: 'F',
+		71: 'G',
+		72: 'H',
+		73: 'I',
+		74: 'J',
+		75: 'K',
+		76: 'L',
+		77: 'M',
+		78: 'N',
+		79: 'O',
+		80: 'P',
+		81: 'Q',
+		82: 'R',
+		83: 'S',
+		84: 'T',
+		85: 'U',
+		86: 'V',
+		87: 'W',
+		88: 'X',
+		89: 'Y',
+		90: 'Z',
+		
+		// 数字键盘上的键的键码值(keyCode)
+		96: 0,
+		97: 1,
+		98: 2,
+		99: 3,
+		100: 4,
+		101: 5,
+		102: 6,
+		103: 7,
+		104: 8,
+		105: 9,
+		106: '*',
+		107: '+',
+		108: 'Enter',
+		109: '-',
+		110: '.',
+		111: '/',
+		
+		// 功能键键码值(keyCode)
+		112: 'F1',
+		113: 'F2',
+		114: 'F3',
+		115: 'F4',
+		116: 'F5',
+		117: 'F6',
+		118: 'F7',
+		119: 'F8',
+		120: 'F9',
+		121: 'F10',
+		122: 'F11',
+		123: 'F12',
+		
+		// 控制键键码值(keyCode)
+		8: 'Backspace',
+		9: 'Tab',
+		12: 'Clear',
+		13: 'Enter',
+		16: 'Shift',
+		17: 'Ctrl',
+		18: 'Alt',
+		20: 'Cape Lock',
+		27: 'Esc',
+		32: 'Spacebar',
+		33: 'Page Up',
+		34: 'Page Down',
+		35: 'End',
+		36: 'Home',
+		37: 'Left Arrow',
+		38: 'Up Arrow',
+		39: 'Right Arrow',
+		40: 'Down Arrow',
+		45: 'Insert',
+		46: 'Delete',
+		144: 'Num Lock',
+		186: ': ;',
+		187: '+ =',
+		188: ', <',
+		189: '- _',
+		190: '. >',
+		192: '/ ?',
+		192: '` ~',
+		219: '[ {',
+		220: '\\ |',
+		221: '] }',
+		222: '\' "',
+		
+		// 多媒体键码值(keyCode)
+		170: '搜索',
+		171: '收藏',
+		172: '浏览器',
+		173: '静音',
+		174: '音量减',
+		175: '音量加',
+		179: '停止',
+		180: '邮件',
+	};
 	
 	$.tetrisGlobalOptions = {
 		width: 20,
 		height: 20,
 		colors: ['00', '33', '66', '99', 'cc', 'ff'],
-		startKey: 116, // 继续 F5
+		startKey: 116, // 开始 F5
 		stopKey: 115, // 结束 F4
 		pauseKey: 117, // 暂停 F6
 		continueKey: 118, // 继续 F7
@@ -81,39 +197,176 @@
 				[0, 0, 0, 0],
 				[0, 0, 0, 0]
 			]
-		]
+		],
+		usableShapeIndexes: []
 	};
 
-	$.fn.tetrisShape = function() {
+	$.fn.tetrisShape = function(container) {
 		var self = this;
 		var rows = Math.ceil($.tetrisGlobalOptions.shapes.length/5);
 
 		$(this).addClass('g-tetris-shape').height(rows * 4 * $.tetrisGlobalOptions.height - 1);
 
-		$('<div class="g-tetris-title g-tetris-gradient"></div>').text('俄罗斯方块 - ' + $.tetrisGlobalOptions.shapes.length + ' 个形状').appendTo(this);
+		var titleElem = $('<div class="g-tetris-title g-tetris-gradient"></div>').text('俄罗斯方块 - ' + $.tetrisGlobalOptions.shapes.length + ' 个形状').appendTo(this);
+
+		$('<span class="g-tetris-shape-setting">设置</span>').prependTo(titleElem).click(function() {
+			$(this).remove();
+
+			var dialogElem = $('<div class="g-tetris-setting-dialog"><div class="g-tetris-title g-tetris-gradient">游戏设置</div></div>').appendTo(document.body);
+			var scrollElem = $('<div class="g-tetris-setting-dialog-scroll"></div>').appendTo(dialogElem);
+
+			$(
+				'<div class="g-tetris-global-setting">' + 
+					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">全局设置</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">开始键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="global[startKey]" type="text" value="' + $.tetrisGlobalOptions.startKey + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">结束键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="global[stopKey]" type="text" value="' + $.tetrisGlobalOptions.stopKey + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">暂停键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="global[pauseKey]" type="text" value="' + $.tetrisGlobalOptions.pauseKey + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">继续键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="global[continueKey]" type="text" value="' + $.tetrisGlobalOptions.continueKey + '"/></div>' +
+					'</div>' +
+				'</div>'
+			).appendTo(scrollElem);
+
+			$(
+				'<div class="g-tetris-player-setting">' + 
+					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">玩家1设置</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">左移键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][leftMove]" type="text" value="' + $.tetris.prototype.options.pressKey.leftMove + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">右移键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rightMove]" type="text" value="' + $.tetris.prototype.options.pressKey.rightMove + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">变形键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rotate]" type="text" value="' + $.tetris.prototype.options.pressKey.rotate + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">下移键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][downMove]" type="text" value="' + $.tetris.prototype.options.pressKey.downMove + '"/></div>' +
+					'</div>' +
+					'<div class="g-tetris-form-row">' +
+						'<label class="g-tetris-form-label">落下键：</label>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][fall]" type="text" value="' + $.tetris.prototype.options.pressKey.fall + '"/></div>' +
+					'</div>' +
+				'</div>'
+			).appendTo(scrollElem);
+
+			var buttonsElem = $('<div class="g-tetris-form-row g-tetris-setting-dialog-buttons"></div>').appendTo(scrollElem);
+
+			$('<button class="g-tetris-button-start-game">开始</button>').appendTo(buttonsElem).click(function() {
+				var flag = false;
+				var options = {
+					global: {},
+					players: []
+				};
+
+				$('input.g-press-key-input', scrollElem).each(function() {
+					var keyCode = parseInt($(this).attr('keyCode'));
+					var iptElem = $('input.g-press-key-input[keyCode="' + keyCode + '"]', scrollElem).not(this);
+
+					if(iptElem.size()) {
+						iptElem.focus();
+						flag = true;
+						return false;
+					} else {
+						var matches = $(this).attr('name').replace(/\]/gm, '').split('[');
+						if(matches[0] == 'global') {
+							options.global[matches[1]] = keyCode;
+						} else if(matches[0] == 'players') {
+							if(!options.players[matches[1]]) {
+								options.players[matches[1]] = {};
+							}
+
+							options.players[matches[1]][matches[2]] = keyCode;
+						}
+					}
+				});
+
+				//console.log(options);
+
+				if(flag) {
+					return;
+				}
+
+				$.extend($.tetrisGlobalOptions, options.global);
+
+				$('.g-tetris-shape-checkbox', self).each(function(i) {
+					if($(this).is('.g-tetris-shape-checked')) {
+						$.tetrisGlobalOptions.usableShapeIndexes.push(i);
+					}
+				});
+
+				$.each(options.players, function(k,v) {
+					$('<div></div>').appendTo(container).tetris({pressKey: v});
+				});
+
+				dialogElem.remove();
+			});
+
+			$('input.g-press-key-input', scrollElem).each(function() {
+				$(this).attr('keyCode', $(this).val());
+				$(this).val($.keyCodes[$(this).val()]);
+			}).bind('keydown.tetris', function(e){
+				if(typeof($.keyCodes[e.keyCode]) != 'undefined') {
+					$(this).attr('keyCode', e.keyCode).val($.keyCodes[e.keyCode]);
+				} else {
+					alert('未知的 keyCode ' + e.keyCode + '！');
+				}
+
+				return false;
+			});
+
+			var players = 0;
+			$('<button class="g-tetris-button-add-player">添加玩家</button>').appendTo(buttonsElem).click(function(){
+				players++;
+
+				var playerSettingElem = $('.g-tetris-player-setting:first', scrollElem).clone(true).insertBefore(buttonsElem);
+
+				$('.g-tetris-form-title', playerSettingElem).html('玩家' + (players+1) + '设置');
+
+				$('input.g-press-key-input', playerSettingElem).each(function() {
+					$(this).attr('name', $(this).attr('name').replace('players[0]', 'players[' + players + ']'));
+				});
+			});
+		});
 
 		$.each($.tetrisGlobalOptions.shapes, function(k,shape) {
 			var X = k % 5, Y = Math.floor(k / 5);
-			var elem = $('<div class="g-tetris-shape-box"></div>').appendTo(self);
 			var color = $.tetris.prototype.randColor();
-
-			elem.css({
+			var css = {
 				left: X * 4 * $.tetrisGlobalOptions.width,
 				top: Y * 4 * $.tetrisGlobalOptions.height
+			};
+			var shapeElem = $('<div class="g-tetris-shape-box"></div>').css(css).appendTo(self);
+
+			$('<div class="g-tetris-shape-checkbox g-tetris-shape-checked">√</div>').css(css).appendTo(self).click(function(){
+				$(this).toggleClass('g-tetris-shape-checked');
 			});
 			
 			var x, y;
 			for(y=0; y<4; y++) {
 				for(x=0; x<4; x++) {
-					var bElem = $('<div class="g-tetris-block"></div>').css({
+					var blockElem = $('<div class="g-tetris-block"></div>').css({
 						left: x * $.tetrisGlobalOptions.width,
 						top: y * $.tetrisGlobalOptions.height
-					}).appendTo(elem);
+					}).appendTo(shapeElem);
 
 					if(shape[y][x]) {
-						$.tetris.prototype.setStyle(bElem, color.backgroundColor, color.borderColor);
+						$.tetris.prototype.setStyle(blockElem, color.backgroundColor, color.borderColor);
 					} else {
-						$.tetris.prototype.removeStyle(bElem);
+						$.tetris.prototype.removeStyle(blockElem);
 					}
 				}
 			}
@@ -619,7 +872,7 @@
 			this.nextBackgroundColor = color.backgroundColor;
 			this.nextBorderColor = color.borderColor;
 			
-			this.nextShapeIndex = this.randInt($.tetrisGlobalOptions.shapes.length);
+			this.nextShapeIndex = $.tetrisGlobalOptions.usableShapeIndexes[this.randInt($.tetrisGlobalOptions.usableShapeIndexes.length)];
 			this.rotateShape(this.nextShape, $.tetrisGlobalOptions.shapes[this.nextShapeIndex], (this.nextShapeIndex in $.tetrisGlobalOptions.isCannotRotateShapeObject) ? 0 : this.randInt(4));
 			
 			var x, y;

@@ -8,14 +8,10 @@
 		<script type="text/javascript" src="tetris.js"></script>
 	</head>
 	<body>
-		<div style="text-align:center;">
-			<div id="j-tetris-shape" style="margin:10px auto;"></div>
-			<div class="j-tetris" style="margin:10px auto;"></div>
-			<div class="j-tetris" style="margin:10px auto;"></div>
-		</div>
+		<div id="j-tetris-shape" style="margin:10px auto;"></div>
+		<div id="j-tetris-game" style="text-align:center;"></div>
 		<script type="text/javascript">
-		$('#j-tetris-shape').tetrisShape();
-		$('.j-tetris').tetris();
+		$('#j-tetris-shape').tetrisShape('#j-tetris-game');
 		</script>
 	</body>
 </html>
