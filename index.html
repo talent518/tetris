@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>俄罗斯方块</title>
+		<link href="tetris.css" media="screen" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" src="tetris.js"></script>
+	</head>
+	<body>
+		<div style="text-align:center;">
+			<div id="j-tetris-shape" style="margin:10px auto;"></div>
+			<div class="j-tetris" style="margin:10px auto;"></div>
+			<div class="j-tetris" style="margin:10px auto;"></div>
+		</div>
+		<script type="text/javascript">
+		$('#j-tetris-shape').tetrisShape();
+		$('.j-tetris').tetris();
+		</script>
+	</body>
+</html>

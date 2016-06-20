@@ -1,0 +1,24 @@
+.g-tetris{display:inline-block;position:relative;width:312px;height:412px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris-title{padding:0 10px;border-bottom:1px #666 solid;background:#efefef;line-height:30px;font-weight:bold;}
+.g-tetris-main-box{display:inline-block;position:absolute;left:10px;top:41px;width:199px;height:359px;overflow:hidden;border:1px #666 solid;}
+.g-tetris-next-box{display:inline-block;position:absolute;right:10px;top:41px;width:79px;height:79px;overflow:hidden;border:1px #666 solid;}
+.g-tetris-block{display:inline-block;position:absolute;width:19px;height:19px;border-left:0px white none;border-top:0px white none;border-right:1px #f2f2f2 solid;border-bottom:1px #f2f2f2 solid;background:white;}
+.g-tetris-block-color{width:18px;height:18px;border-width:1px;border-style:solid;}
+.g-tetris-text-box{display:inline-block;position:absolute;right:10px;bottom:10px;width:81px;height:270px;}
+.g-tetris-text-box div{width:100px;height:30px;overflow:hidden;line-height:30px;}
+.g-tetris-text-box div:after{content:'.';width:0px;height:0px;overflow:hidden;clear:both;}
+.g-tetris-text-box label{float:left;width:30px;overflow:hidden;font-size:12px;}
+.g-tetris-text-box span{display:block;margin-left:30px;overflow:hidden;color:#f60;font-size:18px;font-weight:bold;}
+
+.g-tetris-shape{display:block;position:relative;width:399px;padding-top:31px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris-shape .g-tetris-title{margin-top:-31px;}
+.g-tetris-shape-box{display:inline-block;position:absolute;width:79px;height:79px;overflow:hidden;margin-top:31px;border-right:1px #666 solid;border-bottom:1px #666 solid;}
+
+.g-tetris-gradient{
+    background: -moz-linear-gradient(top, #fefefe 0%, #d7d7d7 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fefefe), color-stop(100%,#d7d7d7));
+    background: -webkit-linear-gradient(top, #fefefe 0%,#d7d7d7 100%);
+    background: -o-linear-gradient(top, #fefefe 0%,#d7d7d7 100%);
+    background: -ms-linear-gradient(top, #fefefe 0%,#d7d7d7 100%);
+    background: linear-gradient(to bottom, #fefefe 0%,#d7d7d7 100%);
+}
