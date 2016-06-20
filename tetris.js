@@ -141,6 +141,14 @@
 		180: '邮件'
 	};
 	
+	function delaySetStyle(elem, backgroundColor, borderColor, interval) {
+		var self = this;
+		
+		setTimeout(function() {
+			self.setStyle(elem, backgroundColor, borderColor);
+		}, interval);
+	};
+	
 	function delayRemoveStyle(elem, interval) {
 		var self = this;
 		
@@ -1147,9 +1155,9 @@
 						}
 
 						if(this.isBlockRecords[y][x]) {
-							this.setStyle(this.mainElems[y][x], this.mainElems[y-moves][x].attr('backgroundColor'), this.mainElems[y-moves][x].attr('borderColor'));
+							delaySetStyle.call(this, this.mainElems[y][x], this.mainElems[y-moves][x].attr('backgroundColor'), this.mainElems[y-moves][x].attr('borderColor'), 200);
 						} else {
-							this.removeStyle(this.mainElems[y][x]);
+							delayRemoveStyle.call(this, this.mainElems[y][x], 200);
 						}
 					}
 
