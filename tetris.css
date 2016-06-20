@@ -1,4 +1,4 @@
-.g-tetris{display:inline-block;position:relative;width:312px;height:412px;margin:0 auto 10px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris{display:inline-block;position:relative;width:312px;height:412px;margin:0 5px 10px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
 .g-tetris-title{padding:0 10px;border-bottom:1px #666 solid;background:#efefef;line-height:30px;font-weight:bold;}
 .g-tetris-main-box{display:inline-block;position:absolute;left:10px;top:41px;width:199px;height:359px;overflow:hidden;border:1px #666 solid;}
 .g-tetris-next-box{display:inline-block;position:absolute;right:10px;top:41px;width:79px;height:79px;overflow:hidden;border:1px #666 solid;}
