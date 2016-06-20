@@ -128,8 +128,8 @@
 	};
 	
 	$.tetrisGlobalOptions = {
-		width: 20,
-		height: 20,
+		width: 25,
+		height: 25,
 		colors: ['00', '33', '66', '99', 'cc', 'ff'],
 		startKey: 116, // 开始 F5
 		stopKey: 115, // 结束 F4
@@ -379,12 +379,39 @@
 				[0, 0, 0, 0]
 			]
 		],
-		usableShapeIndexes: []
+		usableShapeIndexes: [],
+		columnNum: 8
+	};
+
+	$.initArray = function(defArray, defaultValue, defIndex, callbackArgs) {
+		if(isNaN(defIndex) || !$.isArray(callbackArgs)) {
+			defIndex = 0;
+			callbackArgs = [];
+		}
+		
+		if(!$.isArray(defArray) || defArray.length <= defIndex) {
+			if($.isFunction(defaultValue)) {
+				return defaultValue.apply(this, callbackArgs);
+			} else {
+				return defaultValue;
+			}
+		}
+		
+		var retArr = [];
+		var i;
+		
+		for(i=0; i<defArray[defIndex]; i++) {
+			callbackArgs[defIndex] = i;
+			
+			retArr.push($.initArray(defArray, defaultValue, defIndex+1, callbackArgs));
+		}
+		
+		return retArr;
 	};
 
 	$.fn.tetrisShape = function(container) {
 		var self = this;
-		var rows = Math.ceil($.tetrisGlobalOptions.shapes.length/5);
+		var rows = Math.ceil($.tetrisGlobalOptions.shapes.length/$.tetrisGlobalOptions.columnNum);
 
 		$(this).addClass('g-tetris-shape').height(rows * 4 * $.tetrisGlobalOptions.height - 1);
 
@@ -402,16 +429,46 @@
 				$(this).attr('title', $(this).text());
 			});
 		};
+		var timerShapeElem = $('<div class="g-tetris-shape-box g-tetris-shape-box-timer"></div>').appendTo(self);
+		var timerShape = $.initArray([4,4], 0);
+		var timerShapeIndex = 0;
+		var timerShapeElems = $.initArray([4,4], function(y, x) {
+			return $('<div class="g-tetris-block"></div>').attr({
+				x: x,
+				y: y
+			}).css({
+				left: x * $.tetrisGlobalOptions.width,
+				top: y * $.tetrisGlobalOptions.height
+			}).appendTo(timerShapeElem);
+		});
+		var timer = setInterval(function() {
+			var x, y;
+			var color = $.tetris.prototype.randColor();
+			if(timerShapeIndex == $.tetrisGlobalOptions.shapes.length) {
+				timerShapeIndex = 0;
+			}
+			$.tetris.prototype.rotateShape(timerShape, $.tetrisGlobalOptions.shapes[timerShapeIndex++], $.tetris.prototype.randInt(4));
+			for(y=0; y<4; y++) {
+				for(x=0; x<4; x++) {
+					if(timerShape[y][x]) {
+						$.tetris.prototype.setStyle(timerShapeElems[y][x], color.backgroundColor, color.borderColor);
+					} else {
+						$.tetris.prototype.removeStyle(timerShapeElems[y][x]);
+					}
+				}
+			}
+		}, 500);
 
 		$('<span class="g-tetris-shape-setting">设置</span>').prependTo(titleElem).click(function() {
 			$(this).remove();
 
 			var dialogElem = $('<div class="g-tetris-setting-dialog"><div class="g-tetris-title g-tetris-gradient">游戏设置</div></div>').appendTo(document.body);
+			var dialogTitleElem = $('.g-tetris-title', dialogElem);
 			var scrollElem = $('<div class="g-tetris-setting-dialog-scroll"></div>').appendTo(dialogElem);
 
 			$(
 				'<div class="g-tetris-global-setting">' + 
-					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">全局设置</div>' +
+					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">全局</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">开始键：</label>' +
 						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="global[startKey]" type="text" value="' + $.tetrisGlobalOptions.startKey + '"/></div>' +
@@ -433,7 +490,7 @@
 
 			$(
 				'<div class="g-tetris-player-setting">' + 
-					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">玩家1设置</div>' +
+					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">玩家1</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">左移键：</label>' +
 						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][leftMoveKey]" type="text" value="' + $.tetris.prototype.options.leftMoveKey + '"/></div>' +
@@ -457,9 +514,7 @@
 				'</div>'
 			).appendTo(scrollElem);
 
-			var buttonsElem = $('<div class="g-tetris-form-row g-tetris-setting-dialog-buttons"></div>').appendTo(scrollElem);
-
-			$('<button class="g-tetris-button-start-game">开始</button>').appendTo(buttonsElem).click(function() {
+			$('<span class="g-tetris-button-start-game">开始</span>').prependTo(dialogTitleElem).click(function() {
 				var flag = false;
 				var options = {
 					global: {},
@@ -510,6 +565,8 @@
 					$('<div></div>').appendTo(container).tetris(v);
 				});
 
+				clearInterval(timer);
+
 				dialogElem.remove();
 				self.remove();
 			});
@@ -528,7 +585,7 @@
 			});
 
 			var players = 0;
-			var deleteElem = $('<button class="g-tetris-button-add-player">删除玩家</button>').hide().appendTo(buttonsElem).click(function() {
+			var deleteElem = $('<span class="g-tetris-button-delete-player">删除玩家</span>').hide().prependTo(dialogTitleElem).click(function() {
 				players--;
 				$('.g-tetris-player-setting:last', scrollElem).remove();
 				if(players) {
@@ -537,12 +594,12 @@
 					deleteElem.hide();
 				}
 			});
-			$('<button class="g-tetris-button-add-player">添加玩家</button>').insertBefore(deleteElem).click(function(){
+			$('<span class="g-tetris-button-add-player">添加玩家</span>').insertAfter(deleteElem).click(function(){
 				players++;
 
-				var playerSettingElem = $('.g-tetris-player-setting:first', scrollElem).clone(true).insertBefore(buttonsElem);
+				var playerSettingElem = $('.g-tetris-player-setting:first', scrollElem).clone(true).appendTo(scrollElem);
 
-				$('.g-tetris-form-title', playerSettingElem).html('玩家' + (players+1) + '设置');
+				$('.g-tetris-form-title', playerSettingElem).html('玩家' + (players+1));
 
 				$('input.g-press-key-input', playerSettingElem).each(function() {
 					$(this).attr('name', $(this).attr('name').replace('players[0]', 'players[' + players + ']'));
@@ -554,7 +611,7 @@
 
 		var shapeMaps = {};
 		$.each($.tetrisGlobalOptions.shapes, function(k,shape) {
-			var X = k % 5, Y = Math.floor(k / 5);
+			var X = k % $.tetrisGlobalOptions.columnNum, Y = Math.floor(k / $.tetrisGlobalOptions.columnNum);
 			var color = $.tetris.prototype.randColor();
 			var css = {
 				left: X * 4 * $.tetrisGlobalOptions.width,
@@ -644,31 +701,7 @@
 		
 		return this;
 	};
-	$.initArray = function(defArray, defaultValue, defIndex, callbackArgs) {
-		if(isNaN(defIndex) || !$.isArray(callbackArgs)) {
-			defIndex = 0;
-			callbackArgs = [];
-		}
-		
-		if(!$.isArray(defArray) || defArray.length <= defIndex) {
-			if($.isFunction(defaultValue)) {
-				return defaultValue.apply(this, callbackArgs);
-			} else {
-				return defaultValue;
-			}
-		}
-		
-		var retArr = [];
-		var i;
-		
-		for(i=0; i<defArray[defIndex]; i++) {
-			callbackArgs[defIndex] = i;
-			
-			retArr.push($.initArray(defArray, defaultValue, defIndex+1, callbackArgs));
-		}
-		
-		return retArr;
-	};
+
 	$.tetris = function(elem, options) {
 		this.elem = $(elem);
 		this.options = $.extend(true, {}, this.options, options);
@@ -788,13 +821,19 @@
 			});
 			
 			this.mainElems = $.initArray([18,10], function(y, x) {
-				return $('<div class="g-tetris-block"></div>').css({
+				return $('<div class="g-tetris-block"></div>').attr({
+					x: x,
+					y: y
+				}).css({
 					left: x * $.tetrisGlobalOptions.width,
 					top: y * $.tetrisGlobalOptions.height
 				}).appendTo(self.mainBox);
 			});
 			this.nextElems = $.initArray([4,4], function(y, x) {
-				return $('<div class="g-tetris-block"></div>').css({
+				return $('<div class="g-tetris-block"></div>').attr({
+					x: x,
+					y: y
+				}).css({
 					left: x * $.tetrisGlobalOptions.width,
 					top: y * $.tetrisGlobalOptions.height
 				}).appendTo(self.nextBox);

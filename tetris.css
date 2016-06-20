@@ -1,27 +1,28 @@
-.g-tetris{display:inline-block;position:relative;width:312px;height:412px;margin:0 5px 10px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris{display:inline-block;position:relative;width:382px;height:502px;margin:0 5px 10px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
 .g-tetris-title{padding:0 10px;border-bottom:1px #666 solid;background:#efefef;line-height:30px;font-weight:bold;}
-.g-tetris-main-box{display:inline-block;position:absolute;left:10px;top:41px;width:199px;height:359px;overflow:hidden;border:1px #666 solid;}
-.g-tetris-next-box{display:inline-block;position:absolute;right:10px;top:41px;width:79px;height:79px;overflow:hidden;border:1px #666 solid;}
-.g-tetris-block{display:inline-block;position:absolute;width:19px;height:19px;border-left:0px white none;border-top:0px white none;border-right:1px #f2f2f2 solid;border-bottom:1px #f2f2f2 solid;background:white;}
-.g-tetris-block-color{width:18px;height:18px;border-width:1px;border-style:solid;}
-.g-tetris-text-box{display:inline-block;position:absolute;right:10px;bottom:10px;width:81px;height:240px;overflow:hidden;padding-top:14px;border-top:1px #efefef solid;}
-.g-tetris-text-box p{width:100%;height:30px;overflow:hidden;margin:0px;padding:0px;line-height:30px;}
-.g-tetris-text-box p:after{display:block;content:'.';width:0px;height:0px;overflow:hidden;clear:both;}
-.g-tetris-text-box label{float:left;width:30px;overflow:hidden;font-size:12px;}
-.g-tetris-text-box span{display:block;margin-left:30px;overflow:hidden;text-overflow:ellipsis;}
+.g-tetris-main-box{display:inline-block;position:absolute;left:10px;top:41px;width:249px;height:449px;overflow:hidden;border:1px #666 solid;}
+.g-tetris-next-box{display:inline-block;position:absolute;right:10px;top:41px;width:99px;height:99px;overflow:hidden;border:1px #666 solid;}
+.g-tetris-block{display:inline-block;position:absolute;width:24px;height:24px;border-left:0px white none;border-top:0px white none;border-right:1px #f2f2f2 solid;border-bottom:1px #f2f2f2 solid;background:white;}
+.g-tetris-block-color{width:23px;height:23px;border-width:1px;border-style:solid;}
+.g-tetris-text-box{display:inline-block;position:absolute;overflow:hidden;}
+.g-tetris-text-box p{margin:0px;padding:0px;text-align:center;}
+.g-tetris-text-box label{display:block;font-size:12px;}
+.g-tetris-text-box span{display:block;overflow:hidden;text-overflow:ellipsis;}
 .g-tetris-text-box .g-num{color:#f60;font-size:18px;font-weight:bold;}
-.g-tetris-text-box .g-key{color:gray;font-size:7px;}
-.g-tetris-text-box .g-key-box{margin-top:15px;padding-top:14px;border-top:1px #efefef solid;}
+.g-tetris-text-box .g-key{color:gray;font-size:12px;}
+.g-tetris-text-box .g-key-box{border-top:1px #666 solid;}
+.g-tetris .g-tetris-text-box{right:10px;bottom:10px;width:99px;height:338px;border:1px #666 solid;line-height:24px;}
 
-.g-tetris-shape{display:block;position:relative;width:479px;padding-top:31px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris-shape{display:block;position:relative;width:909px;padding-top:31px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
 .g-tetris-shape .g-tetris-title{margin-top:-31px;}
-.g-tetris-shape .g-tetris-text-box{bottom:0px;right:0px;width:69px;height:auto;padding-top:0px;border-top:none;}
-.g-tetris-shape-setting{float:right;cursor:pointer;}
+.g-tetris-shape .g-tetris-text-box{right:0px;bottom:0px;width:99px;height:auto;border-left:1px #666 solid;line-height:30px;}
+.g-tetris-shape-setting{float:right;cursor:pointer;font-size:12px;}
 .g-tetris-shape-setting:hover{color:#F60;}
-.g-tetris-shape-box{display:inline-block;position:absolute;width:79px;height:79px;overflow:hidden;margin-top:31px;border-right:1px #666 solid;border-bottom:1px #666 solid;}
+.g-tetris-shape-box{display:inline-block;position:absolute;width:99px;height:99px;overflow:hidden;margin-top:31px;border-right:1px #666 solid;border-bottom:1px #666 solid;}
 .g-tetris-shape-box .g-tetris-block{text-align:center;line-height:19px;color:gray;font-size:7px;}
-.g-tetris-shape-checkbox{display:inline-block;position:absolute;z-index:1;width:79px;height:79px;overflow:hidden;margin-top:31px;cursor:pointer;filter:alpha(opacity = 0);opacity:0.0;}
-.g-tetris-shape-checked{color:green;font-size:79px;line-height:79px;text-align:center;font-weight:bold;filter:alpha(opacity = 75);opacity:0.75;}
+.g-tetris-shape-box-timer{top:0px;right:-1px;border-left:1px #666 solid;}
+.g-tetris-shape-checkbox{display:inline-block;position:absolute;z-index:1;width:99px;height:99px;overflow:hidden;margin-top:31px;cursor:pointer;filter:alpha(opacity = 0);opacity:0.0;}
+.g-tetris-shape-checked{color:green;font-size:99px;line-height:99px;text-align:center;font-weight:bold;filter:alpha(opacity = 75);opacity:0.75;}
 
 body{min-width:640px;min-height:471px;}
 
@@ -35,6 +36,8 @@ body{min-width:640px;min-height:471px;}
 .g-tetris-form-field{margin-left:4em;}
 .g-tetris-setting-dialog-buttons{border-top:1px #666 solid;}
 .g-tetris-setting-dialog-buttons button{margin-right:10px;}
+
+.g-tetris-button-start-game,.g-tetris-button-add-player,.g-tetris-button-delete-player{float:right;margin-left:10px;cursor:pointer;font-size:12px;}
 
 .g-tetris-gradient{
     background: -moz-linear-gradient(top, #fefefe 0%, #d7d7d7 100%);
