@@ -1,3 +1,10 @@
+/*
+ * 俄罗斯方块
+ * 
+ * @author 张宝财 <talent518@yeah.net>
+ * @copyright 张宝财 <talent518@yeah.net>
+ */
+
 .g-tetris{display:inline-block;position:relative;width:382px;height:502px;margin:0 5px 10px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
 .g-tetris-title{padding:0 10px;border-bottom:1px #666 solid;background:#efefef;line-height:30px;font-weight:bold;}
 .g-tetris-main-box{display:inline-block;position:absolute;left:10px;top:41px;width:249px;height:449px;overflow:hidden;border:1px #666 solid;}
@@ -19,7 +26,7 @@
 .g-tetris-shape-setting{float:right;cursor:pointer;font-size:12px;}
 .g-tetris-shape-setting:hover{color:#F60;}
 .g-tetris-shape-box{display:inline-block;position:absolute;width:99px;height:99px;overflow:hidden;margin-top:31px;border-right:1px #666 solid;border-bottom:1px #666 solid;}
-.g-tetris-shape-box .g-tetris-block{text-align:center;line-height:19px;color:gray;font-size:7px;}
+.g-tetris-shape-box .g-tetris-block{text-align:center;line-height:24px;color:gray;font-size:9px;font-family:arial;}
 .g-tetris-shape-box-timer{top:0px;right:-1px;border-left:1px #666 solid;}
 .g-tetris-shape-checkbox{display:inline-block;position:absolute;z-index:1;width:99px;height:99px;overflow:hidden;margin-top:31px;cursor:pointer;filter:alpha(opacity = 0);opacity:0.0;}
 .g-tetris-shape-checked{text-indent:1000px;filter:alpha(opacity = 75);opacity:0.75;background:url(checked.png) 30px 30px no-repeat;}

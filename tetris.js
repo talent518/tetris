@@ -1,10 +1,24 @@
-(function($){
+/*
+ * 俄罗斯方块
+ * 
+ * @author 张宝财 <talent518@yeah.net>
+ * @copyright 张宝财 <talent518@yeah.net>
+ */
+
+(function($) {
 	var tetrisCount = 1;
+
+	if($.browser.msie && $.browser.version <'8.0') {
+		$.fn.tetrisShape = function() {};
+		$.fn.tetris = function() {};
+		alert('俄罗斯方块 IE <= 7.0 以下浏览器不支持，当前版本是：' + $.browser.version);
+		return;
+	}
 
 	Array.prototype.flip = function() {
 		var obj = {};
 
-		$.each(this, function(k, v){
+		$.each(this, function(k, v) {
 			obj[v] = k;
 		});
 
@@ -124,7 +138,7 @@
 		174: '音量减',
 		175: '音量加',
 		179: '停止',
-		180: '邮件',
+		180: '邮件'
 	};
 	
 	$.tetrisGlobalOptions = {
@@ -574,7 +588,7 @@
 			$('input.g-press-key-input', scrollElem).each(function() {
 				$(this).attr('keyCode', $(this).val());
 				$(this).val($.keyCodes[$(this).val()]);
-			}).bind('keydown.tetris', function(e){
+			}).bind('keydown.tetris', function(e) {
 				if(typeof($.keyCodes[e.keyCode]) != 'undefined') {
 					$(this).attr('keyCode', e.keyCode).val($.keyCodes[e.keyCode]);
 				} else {
@@ -594,7 +608,7 @@
 					deleteElem.hide();
 				}
 			});
-			$('<span class="g-tetris-button-add-player">添加玩家</span>').insertAfter(deleteElem).click(function(){
+			$('<span class="g-tetris-button-add-player">添加玩家</span>').insertAfter(deleteElem).click(function() {
 				players++;
 
 				var playerSettingElem = $('.g-tetris-player-setting:first', scrollElem).clone(true).appendTo(scrollElem);
@@ -626,7 +640,7 @@
 				shapeMaps[str] = true;
 			}
 
-			$('<div class="g-tetris-shape-checkbox g-tetris-shape-checked">√</div>').css(css).appendTo(self).click(function(){
+			$('<div class="g-tetris-shape-checkbox g-tetris-shape-checked">√</div>').css(css).appendTo(self).click(function() {
 				$(this).toggleClass('g-tetris-shape-checked');
 			});
 			
@@ -679,7 +693,7 @@
 					} else if(args[1] in tetris.options) { // $().tetris('options', 'optionName', optionValue)
 						if($.isPlainObject(tetris.options[args[0]])) { // $().tetris('options', 'optionName', {})
 							$.extend(true, tetris.options[args[0]], args[1]);
-						} else { // $().tetris('options', 'eventName', function(){})
+						} else { // $().tetris('options', 'eventName', function() {})
 							tetris.options[args[1]] = args[1];
 						}
 					} else {
@@ -869,8 +883,8 @@
 			
 			if(this.isNeedClean) {
 				var self = this;
-				$.each(this.mainElems, function(){
-					$.each(this, function(){
+				$.each(this.mainElems, function() {
+					$.each(this, function() {
 						self.removeStyle(this);
 					});
 				});
@@ -892,7 +906,7 @@
 			this.renderNextShape();
 			
 			var self = this;
-			this.timer =  setInterval(function(){
+			this.timer =  setInterval(function() {
 				self.downMove();
 			}, this.interval);
 		},
@@ -930,7 +944,7 @@
 			this.titleElem.text(this.strTitle + ' - 游戏中...');
 			
 			var self = this;
-			this.timer =  setInterval(function(){
+			this.timer =  setInterval(function() {
 				self.downMove();
 			}, this.interval);
 		},
@@ -1051,7 +1065,7 @@
 				clearInterval(this.timer);
 			
 				var self = this;
-				this.timer =  setInterval(function(){
+				this.timer =  setInterval(function() {
 					self.downMove();
 				}, this.interval);
 
@@ -1072,7 +1086,7 @@
 						}
 
 						if(this.isBlockRecords[y][x]) {
-							this.setStyle(this.mainElems[y][x], this.mainElems[y-moves][x].css('backgroundColor'), this.mainElems[y-moves][x].css('borderColor'));
+							this.setStyle(this.mainElems[y][x], this.mainElems[y-moves][x].attr('backgroundColor'), this.mainElems[y-moves][x].attr('borderColor'));
 						} else {
 							this.removeStyle(this.mainElems[y][x]);
 						}
@@ -1260,7 +1274,10 @@
 			return Math.floor(Math.random()*maxValue);
 		},
 		setStyle: function(elem, bgColor, borderColor) {
-			elem.addClass('g-tetris-block-color').css({
+			elem.addClass('g-tetris-block-color').attr({
+				backgroundColor: bgColor,
+				borderColor: borderColor
+			}).css({
 				backgroundColor: bgColor,
 				borderColor: borderColor
 			});
@@ -1272,13 +1289,13 @@
 
 			var css=elem.position();
 			
-			elem.removeClass('g-tetris-block-color').removeAttr('style').css(css);
+			elem.removeAttr('backgroundColor').removeAttr('borderColor').removeClass('g-tetris-block-color').removeAttr('style').css(css);
 		},
 		log: function() {
 			console.log(this.strTitle + '\n===================\n' + this.array2string(this.isBlockRecords));
 		},
 		array2string: function(arr2) {
-			return $.map(arr2, function(v){return v.join(',');}).join('\n');
+			return $.map(arr2, function(v) {return v.join(',');}).join('\n');
 		}
 	};
 })(jQuery);
