@@ -33,7 +33,8 @@
 
 body{min-width:640px;min-height:471px;}
 
-.g-tetris-setting-dialog{display:block;position:absolute;z-index:999;left:50%;top:50%;width:600px;height:431px;margin-left:-300px;margin-top:-215px;border:1px #666 solid;background:white;font-size:14px;text-align:left;}
+.g-tetris-setting-dialog-mask{display:block;position:fixed;z-index:998;left:0px;top:0px;width:100%;height:100%;overflow:hidden;background:#333;filter:alpha(opacity = 60);opacity:0.6;}
+.g-tetris-setting-dialog{display:block;position:absolute;z-index:999;left:50%;top:50%;width:600px;height:431px;margin-left:-300px;margin-top:-215px;border:1px #333 solid;background:white;font-size:14px;text-align:left;}
 .g-tetris-setting-dialog-scroll{height:400px;overflow:auto;}
 .g-tetris-global-setting{margin-top:-1px;}
 .g-tetris-form-title{line-height:22px;font-size:12px;border-top:1px #999 solid;filter:alpha(opacity = 80);opacity:0.8;}

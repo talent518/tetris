@@ -20,8 +20,8 @@
 		
 		$('#j-tetris-shape').tetrisShape('#j-tetris-game', {
 			beforeScore: function(scores, lines) {
-				soundManager.setVolume('score', 50);
-				soundManager.play('score', lines);
+				soundManager.setVolume('score', 100);
+				soundManager.play('score', 1);
 			},
 			afterSave: function(stack) {
 				if(stack.length) {

@@ -9,6 +9,7 @@
 	var tetrisCount = 1;
 
 	if($.browser.msie && $.browser.version <'8.0') {
+		$.tetrisGlobalOptions = {};
 		$.fn.tetrisShape = function() {};
 		$.fn.tetris = function() {};
 		alert('俄罗斯方块 IE <= 7.0 以下浏览器不支持，当前版本是：' + $.browser.version);
@@ -437,7 +438,7 @@
 				[0, 0, 0, 0]
 			]
 		],
-		usableShapeIndexes: [],
+		usableShapeIndexes: [6, 7, 8, 9, 10, 11, 12],
 		columnNum: 8
 	};
 
@@ -519,8 +520,13 @@
 		}, 500);
 
 		$('<span class="g-tetris-shape-setting">设置</span>').prependTo(titleElem).click(function() {
+			if($('.g-tetris-shape-checked', self).size()<3) {
+				alert('最少选择3个形状！');
+				return;
+			}
 			$(this).remove();
 
+			var dialogMaskElem = $('<div class="g-tetris-setting-dialog-mask"></div>').appendTo(document.body);
 			var dialogElem = $('<div class="g-tetris-setting-dialog"><div class="g-tetris-title g-tetris-gradient">游戏设置</div></div>').appendTo(document.body);
 			var dialogTitleElem = $('.g-tetris-title', dialogElem);
 			var scrollElem = $('<div class="g-tetris-setting-dialog-scroll"></div>').appendTo(dialogElem);
@@ -614,6 +620,7 @@
 
 				globalKeyTextCall();
 
+				$.tetrisGlobalOptions.usableShapeIndexes = [];
 				$('.g-tetris-shape-checkbox', self).each(function(i) {
 					if($(this).is('.g-tetris-shape-checked')) {
 						$.tetrisGlobalOptions.usableShapeIndexes.push(i);
@@ -626,6 +633,7 @@
 
 				clearInterval(timer);
 
+				dialogMaskElem.remove();
 				dialogElem.remove();
 				self.remove();
 			});
@@ -669,6 +677,7 @@
 		});
 
 		var shapeMaps = {};
+		var checkedShapeIndexes = $.tetrisGlobalOptions.usableShapeIndexes.flip();
 		$.each($.tetrisGlobalOptions.shapes, function(k,shape) {
 			var X = k % $.tetrisGlobalOptions.columnNum, Y = Math.floor(k / $.tetrisGlobalOptions.columnNum);
 			var color = $.tetris.prototype.randColor();
@@ -685,9 +694,12 @@
 				shapeMaps[str] = true;
 			}
 
-			$('<div class="g-tetris-shape-checkbox g-tetris-shape-checked">√</div>').css(css).appendTo(self).click(function() {
+			var shapeCheckboxElem = $('<div class="g-tetris-shape-checkbox">√</div>').css(css).appendTo(self).click(function() {
 				$(this).toggleClass('g-tetris-shape-checked');
 			});
+			if(k in checkedShapeIndexes) {
+				shapeCheckboxElem.addClass('g-tetris-shape-checked');
+			}
 			
 			var x, y;
 			for(y=0; y<4; y++) {
@@ -718,12 +730,6 @@
 		var i;
 		for(i=1; i<arguments.length; i++) {
 			args.push(arguments[i]);
-		}
-
-		if($.tetrisGlobalOptions.usableShapeIndexes.length == 0) {
-			for(i in $.tetrisGlobalOptions.shapes) {
-				$.tetrisGlobalOptions.usableShapeIndexes.push(i);
-			}
 		}
 		
 		this.filter('.g-tetris').each(function() {
@@ -843,6 +849,11 @@
 					case $.tetrisGlobalOptions.continueKey:
 						self.continueGame();
 						break;
+				}
+				if(!self.isStarted || self.isPaused) {
+					return false;
+				}
+				switch(e.keyCode) {
 					case self.options.rotateKey:
 						self.rotate();
 						break;
@@ -1003,7 +1014,7 @@
 				return;
 			}
 			this.rotateShape(this.mainTempShape, this.mainShape, 1);
-			if(!this.isMoveable(this.mainX, this.mainY, this.mainTempShape)) {
+			if(!this.isMoveable(this.mainX, this.mainY, this.mainTempShape, true)) {
 				return;
 			}
 			this.rotateShape(this.mainShape, this.mainTempShape, 0);
@@ -1129,6 +1140,9 @@
 					}
 
 					if(flag) {
+						for(x=0; x<this.isBlockRecords[y].length; x++) {
+							this.setStyle(this.mainElems[y][x], '#C00', '#F00 #900 #900 #F00');
+						}
 						stack.push(y);
 					}
 				}
@@ -1171,9 +1185,9 @@
 						}
 
 						if(this.isBlockRecords[y][x]) {
-							delaySetStyle.call(this, this.mainElems[y][x], this.mainElems[y-moves][x].attr('backgroundColor'), this.mainElems[y-moves][x].attr('borderColor'), 200);
+							delaySetStyle.call(this, this.mainElems[y][x], this.mainElems[y-moves][x].attr('backgroundColor'), this.mainElems[y-moves][x].attr('borderColor'), 100);
 						} else {
-							delayRemoveStyle.call(this, this.mainElems[y][x], 200);
+							delayRemoveStyle.call(this, this.mainElems[y][x], 100);
 						}
 					}
 
