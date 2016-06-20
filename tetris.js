@@ -1006,28 +1006,32 @@
 			this.saveRecordAndNextShape();
 		},
 		saveRecordAndNextShape: function() {
-			var xx, x, y, flag, stack = [];
+			var x, y, flag, stack = [];
 
 			for(y=this.mainY; y<this.mainY+4; y++) {
+				flag = false;
 				for(x=this.mainX; x<this.mainX+4; x++) {
 					if(this.mainElems[y] && this.mainElems[y][x]) {
 						this.isBlockRecords[y][x] |= this.mainShape[y-this.mainY][x-this.mainX];
 
 						if(this.isBlockRecords[y][x]) {
 							flag = true;
-							for(xx=0; xx<this.isBlockRecords[y].length; xx++) {
-								if(!this.isBlockRecords[y][xx]) {
-									flag = false;
-								}
-							}
-
-							if(flag) {
-								stack.push(y);
-							}
 						}
 					} else if(this.mainShape[y-this.mainY][x-this.mainX]) {
 						this.stopGame();
 						return;
+					}
+				}
+
+				if(flag) {
+					for(x=0; x<this.isBlockRecords[y].length; x++) {
+						if(!this.isBlockRecords[y][x]) {
+							flag = false;
+						}
+					}
+
+					if(flag) {
+						stack.push(y);
 					}
 				}
 			}
@@ -1057,6 +1061,8 @@
 						i--;
 						moves++;
 					}
+
+					console.log(y, moves, stack);
 
 					for(x=0; x<this.isBlockRecords[y].length; x++) {
 						if(y-moves < 0) {
@@ -1260,6 +1266,10 @@
 			});
 		},
 		removeStyle: function(elem) {
+			if(!elem.is('.g-tetris-block-color')) {
+				return;
+			}
+
 			var css=elem.position();
 			
 			elem.removeClass('g-tetris-block-color').removeAttr('style').css(css);

@@ -22,7 +22,7 @@
 .g-tetris-shape-box .g-tetris-block{text-align:center;line-height:19px;color:gray;font-size:7px;}
 .g-tetris-shape-box-timer{top:0px;right:-1px;border-left:1px #666 solid;}
 .g-tetris-shape-checkbox{display:inline-block;position:absolute;z-index:1;width:99px;height:99px;overflow:hidden;margin-top:31px;cursor:pointer;filter:alpha(opacity = 0);opacity:0.0;}
-.g-tetris-shape-checked{color:green;font-size:99px;line-height:99px;text-align:center;font-weight:bold;filter:alpha(opacity = 75);opacity:0.75;}
+.g-tetris-shape-checked{text-indent:1000px;filter:alpha(opacity = 75);opacity:0.75;background:url(checked.png) 30px 30px no-repeat;}
 
 body{min-width:640px;min-height:471px;}
 
