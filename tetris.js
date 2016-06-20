@@ -208,6 +208,19 @@
 		$(this).addClass('g-tetris-shape').height(rows * 4 * $.tetrisGlobalOptions.height - 1);
 
 		var titleElem = $('<div class="g-tetris-title g-tetris-gradient"></div>').text('俄罗斯方块 - ' + $.tetrisGlobalOptions.shapes.length + ' 个形状').appendTo(this);
+		var globalKeyTextCall = function() {
+			var h = $(self).height();
+			var textBoxElem = $('<div class="g-tetris-text-box"></div>').appendTo(self);
+			$('<p><label>开始键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.startKey]);
+			$('<p><label>结束键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.stopKey]);
+			$('<p><label>暂停键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.pauseKey]);
+			$('<p><label>继续键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.continueKey]);
+
+			textBoxElem.css('padding', Math.floor(($(self).height()-textBoxElem.height())/2) + 'px 0px');
+			$('.g-key', keyBoxElem).each(function() {
+				$(this).attr('title', $(this).text());
+			});
+		};
 
 		$('<span class="g-tetris-shape-setting">设置</span>').prependTo(titleElem).click(function() {
 			$(this).remove();
@@ -242,23 +255,23 @@
 					'<div class="g-tetris-title g-tetris-gradient g-tetris-form-title">玩家1设置</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">左移键：</label>' +
-						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][leftMove]" type="text" value="' + $.tetris.prototype.options.pressKey.leftMove + '"/></div>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][leftMoveKey]" type="text" value="' + $.tetris.prototype.options.leftMoveKey + '"/></div>' +
 					'</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">右移键：</label>' +
-						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rightMove]" type="text" value="' + $.tetris.prototype.options.pressKey.rightMove + '"/></div>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rightMoveKey]" type="text" value="' + $.tetris.prototype.options.rightMoveKey + '"/></div>' +
 					'</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">变形键：</label>' +
-						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rotate]" type="text" value="' + $.tetris.prototype.options.pressKey.rotate + '"/></div>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][rotateKey]" type="text" value="' + $.tetris.prototype.options.rotateKey + '"/></div>' +
 					'</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">下移键：</label>' +
-						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][downMove]" type="text" value="' + $.tetris.prototype.options.pressKey.downMove + '"/></div>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][downMoveKey]" type="text" value="' + $.tetris.prototype.options.downMoveKey + '"/></div>' +
 					'</div>' +
 					'<div class="g-tetris-form-row">' +
 						'<label class="g-tetris-form-label">落下键：</label>' +
-						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][fall]" type="text" value="' + $.tetris.prototype.options.pressKey.fall + '"/></div>' +
+						'<div class="g-tetris-form-field"><input class="g-press-key-input" name="players[0][fallKey]" type="text" value="' + $.tetris.prototype.options.fallKey + '"/></div>' +
 					'</div>' +
 				'</div>'
 			).appendTo(scrollElem);
@@ -302,6 +315,10 @@
 
 				$.extend($.tetrisGlobalOptions, options.global);
 
+				$('.g-tetris-text-box', self).remove();
+
+				globalKeyTextCall();
+
 				$('.g-tetris-shape-checkbox', self).each(function(i) {
 					if($(this).is('.g-tetris-shape-checked')) {
 						$.tetrisGlobalOptions.usableShapeIndexes.push(i);
@@ -309,7 +326,7 @@
 				});
 
 				$.each(options.players, function(k,v) {
-					$('<div></div>').appendTo(container).tetris({pressKey: v});
+					$('<div></div>').appendTo(container).tetris(v);
 				});
 
 				dialogElem.remove();
@@ -371,6 +388,8 @@
 				}
 			}
 		});
+
+		globalKeyTextCall();
 	};
 	
 	$.fn.tetris = function(options) {
@@ -390,9 +409,9 @@
 					if($.isPlainObject(args[1])) { // $().tetris('options', {})
 						$.extend(true, tetris.options, args[0]);
 					} else if(args[1] in tetris.options) { // $().tetris('options', 'optionName', optionValue)
-						if($.isPlainObject(tetris.options[args[0]])) { // $().tetris('options', 'pressKey', {})
+						if($.isPlainObject(tetris.options[args[0]])) { // $().tetris('options', 'optionName', {})
 							$.extend(true, tetris.options[args[0]], args[1]);
-						} else { // $().tetris('options', 'beforeInit', function(){})
+						} else { // $().tetris('options', 'eventName', function(){})
 							tetris.options[args[1]] = args[1];
 						}
 					} else {
@@ -448,13 +467,12 @@
 		options: { // 可设置选项
 			beforeInit: function() {}, // 初始化前事件
 			afterInit: function() {}, // 初始化后事件
-			pressKey: {
-				leftMove: 37, // 左移
-				rightMove: 39, // 右移
-				rotate: 38, // 变形
-				downMove: 40, // 下移
-				fall: 32 // 落下
-			}
+
+			leftMoveKey: 37, // 左移
+			rightMoveKey: 39, // 右移
+			rotateKey: 38, // 变形
+			downMoveKey: 40, // 下移
+			fallKey: 32 // 落下
 		},
 		
 		elem: $([]), // 主元素 .g-tetris
@@ -517,19 +535,19 @@
 					case $.tetrisGlobalOptions.continueKey:
 						self.continueGame();
 						break;
-					case self.options.pressKey.rotate:
+					case self.options.rotateKey:
 						self.rotate();
 						break;
-					case self.options.pressKey.leftMove:
+					case self.options.leftMoveKey:
 						self.leftMove();
 						break;
-					case self.options.pressKey.rightMove:
+					case self.options.rightMoveKey:
 						self.rightMove();
 						break;
-					case self.options.pressKey.downMove:
+					case self.options.downMoveKey:
 						self.downMove();
 						break;
-					case self.options.pressKey.fall:
+					case self.options.fallKey:
 						self.fall();
 						break;
 				}
@@ -543,8 +561,20 @@
 			this.mainBox = $('<div class="g-tetris-main-box"></div>').appendTo(this.elem);
 			this.nextBox = $('<div class="g-tetris-next-box"></div>').appendTo(this.elem);
 			this.textBox = $('<div class="g-tetris-text-box"></div>').appendTo(this.elem);
-			this.scoreElem = $('<div><label>得分</label><span>0</span></div>').appendTo(this.textBox).find('span');
-			this.lineElem = $('<div><label>行数</label><span>0</span></div>').appendTo(this.textBox).find('span');
+			this.scoreElem = $('<p><label>得分</label><span class="g-num">0</span></p>').appendTo(this.textBox).find('span');
+			this.lineElem = $('<p><label>行数</label><span class="g-num">0</span></p>').appendTo(this.textBox).find('span');
+
+			var keyBoxElem = $('<div class="g-key-box"></div>').appendTo(this.textBox);
+
+			$('<p><label>左移键</label><span class="g-key"></span></p>').appendTo(keyBoxElem).find('span').text($.keyCodes[this.options.leftMoveKey]);
+			$('<p><label>右移键</label><span class="g-key"></span></p>').appendTo(keyBoxElem).find('span').text($.keyCodes[this.options.rightMoveKey]);
+			$('<p><label>变形键</label><span class="g-key"></span></p>').appendTo(keyBoxElem).find('span').text($.keyCodes[this.options.rotateKey]);
+			$('<p><label>下移键</label><span class="g-key"></span></p>').appendTo(keyBoxElem).find('span').text($.keyCodes[this.options.downMoveKey]);
+			$('<p><label>落下键</label><span class="g-key"></span></p>').appendTo(keyBoxElem).find('span').text($.keyCodes[this.options.fallKey]);
+
+			$('.g-key', keyBoxElem).each(function() {
+				$(this).attr('title', $(this).text());
+			});
 			
 			this.mainElems = $.initArray([18,10], function(y, x) {
 				return $('<div class="g-tetris-block"></div>').css({
