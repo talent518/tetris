@@ -16,6 +16,11 @@
 		return;
 	}
 
+	/**
+	 * 反转数组
+	 * 
+	 * @return Object {val1:key1,val2:key2,...}
+	 */
 	Array.prototype.flip = function() {
 		var obj = {};
 
@@ -142,6 +147,9 @@
 		180: '邮件'
 	};
 	
+	/**
+	 * 延迟设置样式
+	 */
 	function delaySetStyle(elem, backgroundColor, borderColor, interval) {
 		var self = this;
 		
@@ -150,6 +158,9 @@
 		}, interval);
 	};
 	
+	/**
+	 * 延迟移除样式
+	 */
 	function delayRemoveStyle(elem, interval) {
 		var self = this;
 		
@@ -158,16 +169,21 @@
 		}, interval);
 	};
 	
+	/**
+	 * 全局选项
+	 */
 	$.tetrisGlobalOptions = {
-		width: 25,
-		height: 25,
+		width: 25, // 小方块宽度
+		height: 25, // 小方块高度
 		colors: ['00', '33', '66', '99', 'cc', 'ff'],
 		startKey: 116, // 开始 F5
 		stopKey: 115, // 结束 F4
 		pauseKey: 117, // 暂停 F6
 		continueKey: 118, // 继续 F7
-		isCannotRotateShapeObject: [0, 3, 10, 16, 38].flip(),
+		isCannotRotateShapeObject: [0, 3, 10, 16, 38].flip(), // 不允许旋转的形状的索引对象
+		// 自定义形状的下落或落下事件处理函数
 		shapeDownCallback: {
+			// 迫击炮
 			3: function() {
 				var x, y, self = this;
 				
@@ -181,6 +197,7 @@
 					}
 				}
 			},
+			// 土炮
 			38: function() {
 				var x, y;
 				
@@ -195,7 +212,9 @@
 				}
 			}
 		},
+		// 空心点
 		crossCorePointIndex: 0,
+		// 可供选择的形状
 		shapes: [
 			[
 				[1, 0, 0, 0],
@@ -438,10 +457,19 @@
 				[0, 0, 0, 0]
 			]
 		],
+		// 选中形状的索引
 		usableShapeIndexes: [6, 7, 8, 9, 10, 11, 12],
+		// 游戏设置的一行显示几个形状
 		columnNum: 8
 	};
 
+	/**
+	 * 初始化多维数组
+	 * 
+	 * @param defArray Array 多维数组的定义: [z,y,x]
+	 * @param defaultValue mixed 默认值可以是回调函数(function(z,y,x){return z*3+y*2+x;})或其它类型的值
+	 * @return Array
+	 */
 	$.initArray = function(defArray, defaultValue, defIndex, callbackArgs) {
 		if(isNaN(defIndex) || !$.isArray(callbackArgs)) {
 			defIndex = 0;
@@ -468,6 +496,13 @@
 		return retArr;
 	};
 
+	/**
+	 * 游戏设置
+	 * 
+	 * @param container tetris所放置的容器
+	 * @param tetrisOptions 可选参数：tetris游戏选项一般只有事件类选项如beforeInit/afterInit
+	 * @return this jQuery的对象
+	 */
 	$.fn.tetrisShape = function(container, tetrisOptions) {
 		var self = this;
 		var rows = Math.ceil($.tetrisGlobalOptions.shapes.length/$.tetrisGlobalOptions.columnNum);
@@ -723,8 +758,18 @@
 		});
 
 		globalKeyTextCall();
+
+		return this;
 	};
 	
+	/**
+	 * 添加玩家
+	 * 
+	 * @param options 可选参数
+	 *     1. $('.g-tetris').tetris(); $('.g-tetris').tetris({});
+	 *     2. $('.g-tetris').tetris('log'); $('.g-tetris').tetris('options', {}); $('.g-tetris').tetris('options', 'beforeInit', function(){}); $('.g-tetris').tetris('options', 'leftMoveKey', 37)
+	 * @return this jQuery的对象
+	 */
 	$.fn.tetris = function(options) {
 		var args = [];
 		var i;
@@ -767,11 +812,19 @@
 		return this;
 	};
 
+	/**
+	 * 俄罗斯方块游戏主函数 必须使用 new方法调用
+	 * 
+	 * @param elem 游戏容器
+	 * @param options 游戏选项
+	 * @return $.tetris Object
+	 */
 	$.tetris = function(elem, options) {
 		this.elem = $(elem);
 		this.options = $.extend(true, {}, this.options, options);
 		this.init();
 	};
+	// 游戏对象方法或默认属性的定义
 	$.tetris.prototype = {
 		options: { // 可设置选项
 			beforeInit: function() {}, // 初始化前事件
@@ -807,16 +860,16 @@
 		
 		nextShape: [], // 下一个形状数组(4X4)
 		nextShapeIndex: 0, // 下一个形状索引号
-		nextBackgroundColor: '#fff',
-		nextBorderColor: '#fff',
+		nextBackgroundColor: '#fff', // 下一个形状背景色
+		nextBorderColor: '#fff', // 下一个形状边框色
 		
 		mainShape: [], // 主形状数组(4X4)
 		mainShapeIndex: 0, // 主形状索引号
 		mainTempShape: [], // 主临时形状数组(4X4)
-		mainBackgroundColor: '#fff',
-		mainBorderColor: '#fff',
-		mainX: 0,
-		mainY: 0,
+		mainBackgroundColor: '#fff', // 主形状背景色
+		mainBorderColor: '#fff', // 主形状边框色
+		mainX: 0, // 主形状当前X坐标
+		mainY: 0, // 主形状当前Y坐标
 
 		isBlockRecords: [], // 是否有块状态记录
 		
@@ -825,6 +878,7 @@
 		interval: 1000, // 计时器时间间隔
 		timer: 0, // 计时器
 		
+		// 对象初始化方法
 		init: function() {
 			if(this.isInited) {
 				alert('$.tetris.init 方法不能重复执行！');
@@ -926,6 +980,7 @@
 			
 			this.isInited = true;
 		},
+		// 开始游戏
 		startGame: function() {
 			if(this.isStarted) {
 				return;
@@ -971,6 +1026,7 @@
 				self.downMove();
 			}, this.interval);
 		},
+		// 停止游戏
 		stopGame: function() {
 			if(!this.isStarted || this.isPaused) {
 				return;
@@ -984,6 +1040,7 @@
 			
 			clearInterval(this.timer);
 		},
+		// 暂停游戏
 		pauseGame: function() {
 			if(!this.isStarted || this.isPaused) {
 				return;
@@ -995,6 +1052,7 @@
 			
 			clearInterval(this.timer);
 		},
+		// 继续游戏
 		continueGame: function() {
 			if(!this.isStarted || !this.isPaused) {
 				return;
@@ -1009,6 +1067,7 @@
 				self.downMove();
 			}, this.interval);
 		},
+		// 旋转形状
 		rotate: function() {
 			if(this.mainShapeIndex in $.tetrisGlobalOptions.isCannotRotateShapeObject) {
 				return;
@@ -1021,6 +1080,7 @@
 			
 			this.renderMainShape();
 		},
+		// 左移形状
 		leftMove: function() {
 			if(!this.isMoveable(this.mainX-1, this.mainY, this.mainShape, true)) {
 				return;
@@ -1029,6 +1089,7 @@
 			this.mainX--;
 			this.renderMainShape();
 		},
+		// 右移形状
 		rightMove: function() {
 			if(!this.isMoveable(this.mainX+1, this.mainY, this.mainShape, true)) {
 				return;
@@ -1037,6 +1098,7 @@
 			this.mainX++;
 			this.renderMainShape();
 		},
+		// 下移形状
 		downMove: function() {
 			if(this.mainShapeIndex == $.tetrisGlobalOptions.crossCorePointIndex) {
 				var y,flag=true;
@@ -1076,6 +1138,7 @@
 			this.mainY++;
 			this.renderMainShape();
 		},
+		// 落下形状
 		fall: function() {
 			this.cleanMainShape();
 
@@ -1112,6 +1175,7 @@
 				this.saveRecordAndNextShape();
 			}
 		},
+		// 保存形状并消行
 		saveRecordAndNextShape: function() {
 			var x, y, flag, stack = [];
 			
@@ -1210,6 +1274,7 @@
 			
 			this.renderNextShape();
 		},
+		// 生成形状的初始位置
 		makeXY: function() {
 			var x, y, minX = 3, maxX = 0, Y;
 			
@@ -1229,6 +1294,15 @@
 			this.mainX = Math.floor(this.mainElems[0].length/2) - Math.ceil((minX+maxX+1)/2);
 			this.mainY = -Y-1;
 		},
+		/**
+		 * 判断形状是否可移动或旋转
+		 * 
+		 * @param X integer 形状的当前X坐标位置
+		 * @param Y integer 形状的当前X坐标位置
+		 * @param shape [4][4] 形状的二维数组的表示法
+		 * @param flag 是否判断Y<0情况
+		 * @return boolean
+		 */
 		isMoveable: function(X, Y, shape, flag) {
 			var x, y;
 			for(y=Y; y<Y+4; y++) {
@@ -1241,6 +1315,7 @@
 
 			return true;
 		},
+		// 清理当前形状所在主形状的所有小方块样式
 		cleanMainShape: function() {
 			var x, y;
 			for(y=this.mainY; y<this.mainY+4; y++) {
@@ -1251,6 +1326,7 @@
 				}
 			}
 		},
+		// 显示当前形状到主形状中
 		renderMainShape: function() {
 			var x, y;
 			for(y=this.mainY; y<this.mainY+4; y++) {
@@ -1267,6 +1343,7 @@
 				}
 			}
 		},
+		// 显示下一个形状
 		renderNextShape: function() {
 			var color = this.randColor();
 			
@@ -1288,6 +1365,7 @@
 				}
 			}
 		},
+		// 旋转形状的标示数组
 		rotateShape: function(dstShape, srcShape, grade) {
 			var x, y;
 
@@ -1359,6 +1437,7 @@
 				}
 			}
 		},
+		// 随机一种颜色
 		randColor: function() {
 			var r = this.randInt($.tetrisGlobalOptions.colors.length-2)+1;
 			var g = this.randInt($.tetrisGlobalOptions.colors.length-2)+1;
@@ -1371,9 +1450,11 @@
 				borderColor: leftTopColor + ' ' + rightBottomColor + ' ' + rightBottomColor + ' ' + leftTopColor
 			};
 		},
+		// 随机一个整数
 		randInt: function(maxValue) {
 			return Math.floor(Math.random()*maxValue);
 		},
+		// 设置方块的样式
 		setStyle: function(elem, bgColor, borderColor) {
 			elem.addClass('g-tetris-block-color').attr({
 				backgroundColor: bgColor,
@@ -1383,6 +1464,7 @@
 				borderColor: borderColor
 			});
 		},
+		// 移除方块的样式
 		removeStyle: function(elem) {
 			if(!elem.is('.g-tetris-block-color')) {
 				return;
@@ -1392,9 +1474,11 @@
 			
 			elem.removeAttr('backgroundColor').removeAttr('borderColor').removeClass('g-tetris-block-color').removeAttr('style').css(css);
 		},
+		// 打印主形状数组的值到控制台日志中
 		log: function() {
 			console.log(this.strTitle + '\n===================\n' + this.array2string(this.isBlockRecords));
 		},
+		// 数组转字符串
 		array2string: function(arr2) {
 			return $.map(arr2, function(v) {return v.join(',');}).join('\n');
 		}
