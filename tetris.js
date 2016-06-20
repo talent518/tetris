@@ -135,7 +135,8 @@
 		stopKey: 115, // 结束 F4
 		pauseKey: 117, // 暂停 F6
 		continueKey: 118, // 继续 F7
-		isCannotRotateShapeObject: [4, 8, 9].flip(),
+		isCannotRotateShapeObject: [4, 10, 11].flip(),
+		crossCorePointIndex: 11,
 		shapes: [
 			[
 				[1, 0, 0, 0],
@@ -168,6 +169,18 @@
 				[0, 0, 0, 0]
 			],
 			[
+				[0, 1, 0, 0],
+				[1, 1, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[1, 1, 0, 0],
+				[0, 1, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
 				[0, 1, 1, 0],
 				[0, 1, 0, 0],
 				[1, 1, 0, 0],
@@ -196,6 +209,96 @@
 				[0, 0, 0, 0],
 				[0, 0, 0, 0],
 				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[0, 0, 0, 0],
+				[1, 0, 0, 0],
+				[1, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 1, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[1, 1, 0, 0],
+				[1, 0, 0, 0]
+			],
+			[
+				[0, 1, 0, 0],
+				[0, 1, 0, 0],
+				[1, 1, 0, 0],
+				[0, 1, 0, 0]
+			],
+			[
+				[0, 1, 0, 0],
+				[1, 1, 0, 0],
+				[0, 1, 1, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[0, 1, 0, 0],
+				[0, 1, 1, 0],
+				[1, 1, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[0, 1, 0, 0],
+				[0, 1, 0, 0],
+				[1, 1, 1, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[0, 1, 0, 0],
+				[0, 1, 0, 0],
+				[1, 1, 0, 0],
+				[1, 0, 0, 0]
+			],
+			[
+				[1, 0, 0, 0],
+				[1, 0, 0, 0],
+				[1, 1, 0, 0],
+				[0, 1, 0, 0]
+			],
+			[
+				[1, 1, 0, 0],
+				[1, 1, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 1, 0, 0],
+				[1, 1, 0, 0],
+				[0, 1, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[0, 1, 1, 0],
+				[1, 1, 0, 0],
+				[1, 0, 0, 0],
+				[0, 0, 0, 0]
+			],
+			[
+				[1, 0, 1, 0],
+				[1, 1, 1, 0],
+				[0, 0, 0, 0],
+				[0, 0, 0, 0]
 			]
 		],
 		usableShapeIndexes: []
@@ -209,15 +312,15 @@
 
 		var titleElem = $('<div class="g-tetris-title g-tetris-gradient"></div>').text('俄罗斯方块 - ' + $.tetrisGlobalOptions.shapes.length + ' 个形状').appendTo(this);
 		var globalKeyTextCall = function() {
-			var h = $(self).height();
+			var h = self.height();
 			var textBoxElem = $('<div class="g-tetris-text-box"></div>').appendTo(self);
 			$('<p><label>开始键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.startKey]);
 			$('<p><label>结束键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.stopKey]);
 			$('<p><label>暂停键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.pauseKey]);
 			$('<p><label>继续键</label><span class="g-key"></span></p>').appendTo(textBoxElem).find('span').text($.keyCodes[$.tetrisGlobalOptions.continueKey]);
 
-			textBoxElem.css('padding', Math.floor(($(self).height()-textBoxElem.height())/2) + 'px 0px');
-			$('.g-key', keyBoxElem).each(function() {
+			textBoxElem.css('padding', Math.floor((self.height()-textBoxElem.height())/2) + 'px 0px');
+			$('.g-key', textBoxElem).each(function() {
 				$(this).attr('title', $(this).text());
 			});
 		};
@@ -330,6 +433,7 @@
 				});
 
 				dialogElem.remove();
+				self.remove();
 			});
 
 			$('input.g-press-key-input', scrollElem).each(function() {
@@ -346,7 +450,16 @@
 			});
 
 			var players = 0;
-			$('<button class="g-tetris-button-add-player">添加玩家</button>').appendTo(buttonsElem).click(function(){
+			var deleteElem = $('<button class="g-tetris-button-add-player">删除玩家</button>').hide().appendTo(buttonsElem).click(function() {
+				players--;
+				$('.g-tetris-player-setting:last', scrollElem).remove();
+				if(players) {
+					deleteElem.show();
+				} else {
+					deleteElem.hide();
+				}
+			});
+			$('<button class="g-tetris-button-add-player">添加玩家</button>').insertBefore(deleteElem).click(function(){
 				players++;
 
 				var playerSettingElem = $('.g-tetris-player-setting:first', scrollElem).clone(true).insertBefore(buttonsElem);
@@ -356,6 +469,8 @@
 				$('input.g-press-key-input', playerSettingElem).each(function() {
 					$(this).attr('name', $(this).attr('name').replace('players[0]', 'players[' + players + ']'));
 				});
+
+				deleteElem.show();
 			});
 		});
 
@@ -384,6 +499,10 @@
 						$.tetris.prototype.setStyle(blockElem, color.backgroundColor, color.borderColor);
 					} else {
 						$.tetris.prototype.removeStyle(blockElem);
+					}
+
+					if(y == 3 && x == 3) {
+						blockElem.text(k+1);
 					}
 				}
 			}
@@ -713,7 +832,7 @@
 			this.renderMainShape();
 		},
 		downMove: function() {
-			if(this.mainShapeIndex == 9) {
+			if(this.mainShapeIndex == $.tetrisGlobalOptions.crossCorePointIndex) {
 				var y,flag=true;
 				for(y=this.mainElems.length-1; y>Math.max(this.mainY, -1); y--) {
 					if(!this.isBlockRecords[y][this.mainX]) {
@@ -738,7 +857,7 @@
 		fall: function() {
 			this.cleanMainShape();
 
-			if(this.mainShapeIndex == 9) {
+			if(this.mainShapeIndex == $.tetrisGlobalOptions.crossCorePointIndex) {
 				var y;
 				for(y=this.mainElems.length-1; y>Math.max(this.mainY, -1); y--) {
 					if(!this.isBlockRecords[y][this.mainX]) {

@@ -19,6 +19,7 @@
 .g-tetris-shape-setting{float:right;cursor:pointer;}
 .g-tetris-shape-setting:hover{color:#F60;}
 .g-tetris-shape-box{display:inline-block;position:absolute;width:79px;height:79px;overflow:hidden;margin-top:31px;border-right:1px #666 solid;border-bottom:1px #666 solid;}
+.g-tetris-shape-box .g-tetris-block{text-align:center;line-height:19px;color:gray;font-size:7px;}
 .g-tetris-shape-checkbox{display:inline-block;position:absolute;z-index:1;width:79px;height:79px;overflow:hidden;margin-top:31px;cursor:pointer;filter:alpha(opacity = 0);opacity:0.0;}
 .g-tetris-shape-checked{color:green;font-size:79px;line-height:79px;text-align:center;font-weight:bold;filter:alpha(opacity = 75);opacity:0.75;}
 
